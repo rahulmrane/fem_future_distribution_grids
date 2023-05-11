@@ -5,10 +5,10 @@ The goal of this project is to enhance the EE4375: Finite Element Modelling for 
 The code is mostly written in Julia, a programming language, and is used to construct FEM models to calculate the iron and copper losses in power transformers and, in addition, to analyze the substation's temperature.
 
 ## Contents
-- 'lib': Contains files for the required user defined functions
+- `lib`: Contains files for the required user defined functions
 - `General FEM`: General code for FEM models
-  - 'first_order'
-    - 'triangle'
+  - `first_order`: Use of first order elements
+    - `triangle`: Use of triangular elements
       - Contains of the folder :
         - `img`: Contains images obtained
         - `mesh`: Contains GMSH output files
@@ -16,23 +16,23 @@ The code is mostly written in Julia, a programming language, and is used to cons
       - Different cases covered :
         - E-shaped Ferrite Core Transformer Geometry and FEM Modelling
         - STEDIN Transformer Geometry and FEM Modelling
-    - 'quadrilateral'
-    - 'hybrid'
+    - `quadrilateral`: Use of quadrilateral elements
+    - `hybrid`: Use of hybrid meshing
       - Contains of the folder :
         - `img`: Contains images obtained
         - `mesh`: Contains GMSH output files
         - `modelling`: Contains .ipynb files for the required code
       - Different cases covered :
         - STEDIN Transformer Hybrid Geometry
-  - 'second_order'
-    - 'triangle'
+  - `second_order`: Use of second order elements
+    - `triangle`: Use of triangular elements
       - Contains of the folder :
         - `mesh`: Contains GMSH output files
         - `modelling`: Contains .ipynb files for the required code
       - Different cases covered :
         - E-shaped Ferrite Core Transformer Geometry and FEM Modelling
-- 'Magnetic Field Simulations'
-- 'Thermal Field Simulations'
+- `Magnetic Field Simulations`
+- `Thermal Field Simulations`
 
 ## Useful Links
 - Description of the project and the required work allotment : https://github.com/ziolai/finite_element_electrical_engineering/blob/main/project-based-assignment/modeling_distribution_transformer.ipynb
