@@ -33,3 +33,4 @@ The code is mostly written in Julia, a programming language, and is used to cons
 - Thesis of Max van Dijk : https://repository.tudelft.nl/islandora/object/uuid%3A15b25b42-e04b-4ff2-a187-773bc170f061?collection=education
 - Electrical Equipment and Machines: Finite Element Analysis course (MOOC available on NPTEL, IIT Bombay) PDF: https://drive.google.com/file/d/1wiyJuqohQMM8lPlCGI2hVKD1cLqO6cTP/view
 - Electrical Equipment and Machines: Finite Element Analysis course (MOOC available on NPTEL, IIT Bombay) Videos: https://www.youtube.com/playlist?list=PLOzRYVm0a65evnes6W1TFYThU8-4hfqwc
+- Finite Element Methods interesting github page: http://hplgit.github.io/INF5620/doc/pub/sphinx-fem/index.html
