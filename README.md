@@ -31,7 +31,7 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - `vtk`: Contains .vtu files for Paraview visualization
 
 ## Useful Links
-- Description of the project and the required work allotment : https://github.com/ziolai/finite_element_electrical_engineering/blob/main/project-based-assignment/modeling_distribution_transformer.ipynb
+- Description of the project and the required work allotment : https://github.com/ziolai/finite_element_electrical_engineering/blob/main/project-based-assignment/modeling_distribution_transformer/modeling_distribution_transformer.ipynb
 - Main repository of the EE4375 course : https://github.com/ziolai/finite_element_electrical_engineering
 - Repository of Gijs Lagerweij : https://github.com/gijswl/ee4375_fem_ta
 - Repository of Auke Schaap and Philip Soliman : https://github.com/aukeschaap/am-transformers
