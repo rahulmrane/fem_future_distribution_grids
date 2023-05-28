@@ -5,6 +5,7 @@ The goal of this project is to enhance the EE4375: Finite Element Modelling for 
 The code is mostly written in Julia, a programming language, and is used to construct FEM models to calculate the iron and copper losses in power transformers and, in addition, to analyze the substation's temperature.
 
 ## Contents
+- `Documentation`: Contains documentation of the required material
 - `lib`: Contains files for the required user defined functions
 - `General FEM`: General code for FEM models
   - `first_order`: Use of first order elements
@@ -18,12 +19,16 @@ The code is mostly written in Julia, a programming language, and is used to cons
     - `triangle`: Use of triangular elements
       - E-shaped Ferrite Core Transformer Geometry and FEM Modelling
 - `Magnetic Field Simulations`
+  - `Without Eddy Currents`: FEM Analysis with no conductivity of the core
+  - `With Eddy Currents`: FEM Analysis with presence of conductivity of the core
+  - `Non-Linear BH Curve`: FEM Analysis incorporating non-linearity of the core material
 - `Thermal Field Simulations`
 
 - General structure of subfolders :
   - `img`: Contains images obtained
   - `mesh`: Contains GMSH output files
   - `modelling`: Contains .ipynb files for the required code
+  - `vtk`: Contains .vtu files for Paraview visualization
 
 ## Useful Links
 - Description of the project and the required work allotment : https://github.com/ziolai/finite_element_electrical_engineering/blob/main/project-based-assignment/modeling_distribution_transformer.ipynb
