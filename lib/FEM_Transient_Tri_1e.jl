@@ -65,7 +65,7 @@ module FEM_Transient_Tri_1e
         ## Backward Euler 
         for k = 2:length(time_steps)
             # Compute the solution at the next time step
-            u[k] = vec((B + dt * A) \ (B * u[k-1] + dt .* f .* sin(omega*time_steps[k])))
+            u[k] = vec((B + dt * A) \ (B * u[k-1] + dt .* f .* exp(1im*omega*time_steps[k])))
         end
 
         return u
@@ -180,7 +180,7 @@ module FEM_Transient_Tri_1e
         ## Backward Euler 
         for k = 2:length(time_steps)
             # Compute the solution at the next time step
-            u[k] = vec((B + dt * A) \ (B * u[k-1] + dt .* (f .* sin(omega*time_steps[k]) + f/3 .* sin(3*omega*time_steps[k]))))
+            u[k] = vec((B + dt * A) \ (B * u[k-1] + dt .* (f .* exp(1im*omega*time_steps[k]) + f/3 .* exp(1im*3*omega*time_steps[k] + phi_diff))))
         end
 
         return u
@@ -191,14 +191,16 @@ module FEM_Transient_Tri_1e
         k2 = 2.17;
         k3 = 396.2;
         v = k1 * exp(k2*B^2) + k3;
+        if (1 ./ v) == 0
+            v = k3;  
+        end
         return (1 ./ v)
     end
     
     function fem_nonlinear(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps)
-        ## initialize global matrix A & B and global vector f
+        ## initialize global matrix A & C and global vector f
         f = zeros(Complex{Float64}, mesh_data.nnodes, 1)
-        Asp = FastSparseMatrix(mesh_data.nelements)
-        Bsp = FastSparseMatrix(mesh_data.nelements)
+        Csp = FastSparseMatrix(mesh_data.nelements)
 
         xnode = mesh_data.xnode;
         ynode = mesh_data.ynode;
@@ -221,16 +223,16 @@ module FEM_Transient_Tri_1e
             floc = area_id/3*sourceperelement[element_id]*[1; 1; 1]
 
             #....compute local matrix contribution Bloc of the current element
-            Bloc = area_id / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
+            Cloc = area_id / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
 
             # Add local contribution to B
-            add!(Bsp, element_id, nodes, Bloc);
+            add!(Csp, element_id, nodes, Cloc);
 
             #....and add local contribution to global matrices
             f[nodes] += floc;
         end
     
-        B = sparse(Bsp.i_row, Bsp.i_col, Bsp.value, mesh_data.nnodes, mesh_data.nnodes, +);
+        C = sparse(Csp.i_row, Csp.i_col, Csp.value, mesh_data.nnodes, mesh_data.nnodes, +);
     
         ## Handle the boundary conditions
         f[bnd_node_ids] .= 0;
@@ -247,11 +249,13 @@ module FEM_Transient_Tri_1e
         mur_pts = L[mur_pts]
     
         ## Threshold value for the error
-        threshold = 1e-6 .* ones(length(mur_pts))
+        threshold = 1e-2 .* ones(length(mur_pts))
     
         ## Backward Euler 
         for k = 2:length(time_steps)
-            for loop = 1:10000
+            for loop = 1:100
+                Asp = FastSparseMatrix(mesh_data.nelements)
+            
                 ## Perform a loop over the elements
                 for (element_id, nodes) in enumerate(mesh_data.elements)
                     #....retrieve global numbering of the local nodes of the current element
@@ -282,7 +286,7 @@ module FEM_Transient_Tri_1e
                 A[bnd_node_ids,bnd_node_ids] = Diagonal(ones(size(bnd_node_ids)))
 
                 # Compute the solution at the next time step
-                u[k] = vec((B + dt * A) \ (B * u[k-1] + dt .* f .* sin(omega*time_steps[k])))
+                u[k] = vec((C + dt * A) \ (C * u[k-1] + dt .* f .* exp(1im*omega*time_steps[k])))
                 
                 Bx, By, B, Hx, Hy, H, mag_energy = post_process_per_timestep(mesh_data, u[k], reluctivityperelement)
             
