@@ -23,7 +23,8 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - `With Eddy Currents`: FEM Analysis with presence of conductivity of the core
   - `Non-Linear BH Curve`: FEM Analysis incorporating non-linearity of the core material
   - `Voltage-fed Couple Circuit Analysis`: FEM Analysis for Voltage fed Couple Circuit Analysis
-- `Thermal Field Simulations`
+  - `Transient Analysis`: FEM Analysis for Transient Analysis
+  - `Trasient + Voltage-fed Couple Circuit Analysis`: FEM Analysis for Transient + Voltage fed Couple Circuit Analysis
 
 - General structure of subfolders :
   - `img`: Contains images obtained
