@@ -85,7 +85,7 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
   
-- Voltage-fed Couple Circuit Analysis
+- Voltage-fed Coupled Circuit Analysis
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
