@@ -72,8 +72,8 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - <a href="Magnetic Field Simulations/Frequency Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Frequency Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
 
-#### Required Code Files
-- <a href="lib/Post_Process_Frequency.jl">Post Processing - Frequency Domain</a>
+#### Required Code Files - Frequency Domain
+- <a href="lib/Post_Process_Frequency.jl">Post Processing</a>
 - <a href="lib/FEM_Tri_1e.jl">FEM Code for Current-fed Analysis</a>
 - <a href="lib/FEM_VoltageFed_Tri_1e.jl">FEM Code for Voltage-fed Analysis</a>
 
@@ -95,8 +95,8 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
 
-#### Required Code Files
-- <a href="lib/Post_Process_Time.jl">Post Processing - Time Domain</a>
+#### Required Code Files - Time Domain
+- <a href="lib/Post_Process_Time.jl">Post Processing</a>
 - <a href="lib/FEM_Transient_Tri_1e.jl">FEM Code for Current-fed Analysis</a>
 - <a href="lib/FEM_VoltageFed_Tri_1e.jl">FEM Code for Voltage-fed Analysis</a>
 
