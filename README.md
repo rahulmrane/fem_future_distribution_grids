@@ -98,7 +98,7 @@ The code is mostly written in Julia, a programming language, and is used to cons
 #### Required Code Files - Time Domain
 - <a href="lib/Post_Process_Time.jl">Post Processing</a>
 - <a href="lib/FEM_Transient_Tri_1e.jl">FEM Code for Current-fed Analysis</a>
-- <a href="lib/lib/FEM_Transient_VoltageFed_Tri_1e.jl">FEM Code for Voltage-fed Analysis</a>
+- <a href="lib/FEM_Transient_VoltageFed_Tri_1e.jl">FEM Code for Voltage-fed Analysis</a>
 
 ### Other Library Files
 - <a href="lib/Save_VTK.jl">Saving VTK Files Module</a>
