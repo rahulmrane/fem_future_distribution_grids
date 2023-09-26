@@ -1,5 +1,7 @@
 module Mesh_Data_stedin
 
+    using LinearAlgebra
+
     export get_mesh_data_tri_1e
 
     struct mesh_data
@@ -9,6 +11,8 @@ module Mesh_Data_stedin
         nelements   # number of elements
         e_group     # array containing the physical group number of each element
         elements    #  more conveniently structured connectivity array
+        area    #  area of each element
+        Eloc    #  Emat of each element
     end
 
     function get_mesh_data_tri_1e(gmsh)
@@ -45,6 +49,8 @@ module Mesh_Data_stedin
         ngroup16 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 16)
 
         e_group = zeros(1,nelements)
+        area = zeros(1,nelements)
+        Eloc = []
         elements = [zeros(Int, 3) for i in 1:nelements];
         for element_id in 1:nelements
             node1_id = element_connectivity[1][3*(element_id-1)+1]
@@ -99,9 +105,21 @@ module Mesh_Data_stedin
 
             # Store connectivity in a convenient format
             elements[element_id] = [node1_id, node2_id, node3_id];
+
+            #....retrieve the x and y coordinates of the local nodes of the current element
+            xnode1 = xnode[node1_id]; xnode2 = xnode[node2_id]; xnode3 = xnode[node3_id];
+            ynode1 = ynode[node1_id]; ynode2 = ynode[node2_id]; ynode3 = ynode[node3_id];
+
+            #....compute surface area of the current element
+            area[element_id] = ((xnode2 - xnode1)*(ynode3-ynode1) - (xnode3-xnode1)*(ynode2 - ynode1))/2; 
+
+            #....compute local matrix contribution Aloc of the current element
+            Emat = [[xnode1;xnode2;xnode3] [ynode1;ynode2;ynode3] [1;1;1]] \ UniformScaling(1.);
+            Emat[3,:] .= 0;
+            push!(Eloc,Emat)
         end
-    
-        return mesh_data(nnodes, xnode, ynode, nelements, e_group, elements)
+
+        return mesh_data(nnodes, xnode, ynode, nelements, e_group, elements, area, Eloc)
     end
 
 end
