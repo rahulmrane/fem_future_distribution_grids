@@ -2,113 +2,71 @@ module FEM_Transient_Tri_1e
 
     using SparseArrays
     using LinearAlgebra
+    include("Assemble_Matrices.jl");
+    using .Assemble_Matrices
     include("FastSparse.jl");
     using .FastSparse
     include("Post_Process_Time.jl");
     using .Post_Process_Time
 
-    export fem, fem_third_harmonic, fem_nonlinear
+    export fem, fem_third_harmonic, fem_nonlinear, fem_nonlinear_third_harmonic
 
     function fem(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps)
-        ## initialize global matrix A & B and global vector f
-        f = zeros(Complex{Float64}, mesh_data.nnodes, 1)
-        Asp = FastSparseMatrix(mesh_data.nelements)
-        Bsp = FastSparseMatrix(mesh_data.nelements)
-
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
-        ## Perform a loop over the elements
-        for (element_id, nodes) in enumerate(mesh_data.elements)
-            #....compute local vector contribution floc of the current element
-            floc = mesh_data.area[element_id]/3*sourceperelement[element_id]*[1; 1; 1]
-
-            #....compute local matrix contribution Aloc of the current element     
-            Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
-            Bloc = mesh_data.area[element_id] / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
-
-            # Add local contribution to A & B
-            add!(Asp, element_id, nodes, Aloc);
-            add!(Bsp, element_id, nodes, Bloc);
-
-            #....and add local contribution to global matrices
-            f[nodes] += floc;
-        end
-
-        A = sparse(Asp.i_row, Asp.i_col, Asp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-        B = sparse(Bsp.i_row, Bsp.i_col, Bsp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-
-        ## Handle the boundary conditions
-        A[bnd_node_ids,:] .= 0;
-        A[bnd_node_ids,bnd_node_ids] = Diagonal(ones(size(bnd_node_ids)))
-        f[bnd_node_ids] .= 0;
+        ## Assemble A, B, and f Matrices
+        A, B, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
 
         ## Specify time start, end and step
         dt = time_steps[2] - time_steps[1]
-        u = Vector{Array{ComplexF64,1}}(undef, length(time_steps))
+        u = Vector{Array{Float64,1}}(undef, length(time_steps))
 
         K = factorize(B + dt * A)
 
         ## Initial condition
         u[1] = zeros(mesh_data.nnodes)
 
+        print(" ▸ Computing solution .... \r")
+        start = time_ns()
         ## Backward Euler 
         for k = 2:length(time_steps)
+            progress = round(k/length(time_steps)*100, digits=1)
+            elapsed = round((time_ns() - start)/10^9, digits=2)
+            estimated = round(length(time_steps) * elapsed / k, digits=2)
+            print(" ▸ " * string(progress) * "% (" * string(elapsed) * " of est. " * string(estimated) *" s)                \r")
             # Compute the solution at the next time step
-            u[k] = vec((K) \ (B * u[k-1] + dt .* f .* exp(1im*omega*time_steps[k])))
+            u[k] = vec(K \ (B * u[k-1] + dt .* imag(f .* exp(1im*omega*time_steps[k]))))
         end
+        elapsed = round((time_ns() - start)/10^9, digits=2)
+        println(" ✓ Solution computed ("*string(elapsed)*" seconds)                               ")
 
         return u
     end
 
     function fem_third_harmonic(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps, phi_diff)
-        ## initialize global matrix A & B and global vector f
-        f = zeros(Complex{Float64}, mesh_data.nnodes, 1)
-        Asp = FastSparseMatrix(mesh_data.nelements)
-        Bsp = FastSparseMatrix(mesh_data.nelements)
-
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
-        ## Perform a loop over the elements
-        for (element_id, nodes) in enumerate(mesh_data.elements)
-            #....compute local vector contribution floc of the current element
-            floc = mesh_data.area[element_id]/3*sourceperelement[element_id]*[1; 1; 1]
-
-            #....compute local matrix contribution Aloc of the current element     
-            Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
-            Bloc = mesh_data.area[element_id] / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
-
-            # Add local contribution to A & B
-            add!(Asp, element_id, nodes, Aloc);
-            add!(Bsp, element_id, nodes, Bloc);
-
-            #....and add local contribution to global matrices
-            f[nodes] += floc;
-        end
-
-        A = sparse(Asp.i_row, Asp.i_col, Asp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-        B = sparse(Bsp.i_row, Bsp.i_col, Bsp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-
-        ## Handle the boundary conditions
-        A[bnd_node_ids,:] .= 0;
-        A[bnd_node_ids,bnd_node_ids] = Diagonal(ones(size(bnd_node_ids)))
-        f[bnd_node_ids] .= 0;
+        ## Assemble A, B, and f Matrices
+        A, B, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
     
         ## Specify time start, end and step
         dt = time_steps[2] - time_steps[1]
-        u = Vector{Array{ComplexF64,1}}(undef, length(time_steps))
+        u = Vector{Array{Float64,1}}(undef, length(time_steps))
 
         K = factorize(B + dt * A)
     
         ## Initial condition
         u[1] = zeros(mesh_data.nnodes)
     
+        print(" ▸ Computing solution .... \r")
+        start = time_ns()
         ## Backward Euler 
         for k = 2:length(time_steps)
+            progress = round(k/length(time_steps)*100, digits=1)
+            elapsed = round((time_ns() - start)/10^9, digits=2)
+            estimated = round(length(time_steps) * elapsed / k, digits=2)
+            print(" ▸ " * string(progress) * "% (" * string(elapsed) * " of est. " * string(estimated) *" s)                \r")
             # Compute the solution at the next time step
-            u[k] = vec((K) \ (B * u[k-1] + dt .* (f .* exp(1im*omega*time_steps[k]) + f/3 .* exp(1im*3*omega*time_steps[k] + phi_diff))))
+            u[k] = vec(K \ (B * u[k-1] + dt .* (imag(f .* exp(1im*omega*time_steps[k])) + imag(f/3 .* exp(1im*3*omega*time_steps[k] + phi_diff)))))
         end
+        elapsed = round((time_ns() - start)/10^9, digits=2)
+        println(" ✓ Solution computed ("*string(elapsed)*" seconds)                               ")
 
         return u
     end
@@ -120,43 +78,16 @@ module FEM_Transient_Tri_1e
         k3 = 396.2;
         mu0 = 4e-7 * pi;
         v = k1 * exp(k2*B^2) + k3;
-        if (1 ./ v)/mu0 < 10
-            v = 1 / 10 / mu0;  
-        end
         return (1 ./ v)
     end
     
     function fem_nonlinear(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps)
-        ## initialize global matrix A & C and global vector f
-        f = zeros(Complex{Float64}, mesh_data.nnodes, 1)
-        Csp = FastSparseMatrix(mesh_data.nelements)
-
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
-        ## Perform a loop over the elements
-        for (element_id, nodes) in enumerate(mesh_data.elements)
-            #....compute local vector contribution floc of the current element
-            floc = mesh_data.area[element_id]/3*sourceperelement[element_id]*[1; 1; 1]
-
-            #....compute local matrix contribution Bloc of the current element
-            Cloc = mesh_data.area[element_id] / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
-
-            # Add local contribution to B
-            add!(Csp, element_id, nodes, Cloc);
-
-            #....and add local contribution to global matrices
-            f[nodes] += floc;
-        end
-    
-        C = sparse(Csp.i_row, Csp.i_col, Csp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-    
-        ## Handle the boundary conditions
-        f[bnd_node_ids] .= 0;
+        ## Assemble A, B, and f Matrices
+        A, C, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
     
         ## Specify time start, end and step
         dt = time_steps[2] - time_steps[1]
-        u = Vector{Array{ComplexF64,1}}(undef, length(time_steps))
+        u = Vector{Array{Float64,1}}(undef, length(time_steps))
     
         ## Initial condition
         u[1] = zeros(mesh_data.nnodes)
@@ -166,44 +97,108 @@ module FEM_Transient_Tri_1e
         mur_pts = L[mur_pts]
     
         ## Threshold value for the error
-        threshold = 1e-4 .* ones(length(mur_pts))
+        threshold = 1e-3
+        alpha = 0.9
     
+        print(" ▸ Computing solution .... \r")
+        start = time_ns()
         ## Backward Euler 
         for k = 2:length(time_steps)
-            for loop = 1:100
-                Asp = FastSparseMatrix(mesh_data.nelements)
-            
-                ## Perform a loop over the elements
-                for (element_id, nodes) in enumerate(mesh_data.elements)
-                    #....compute local matrix contribution Aloc of the current element
-                    Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
-
-                    # Add local contribution to A
-                    add!(Asp, element_id, nodes, Aloc);
-                end
-
-                A = sparse(Asp.i_row, Asp.i_col, Asp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-
-                ## Handle the boundary conditions
-                A[bnd_node_ids,:] .= 0;
-                A[bnd_node_ids,bnd_node_ids] = Diagonal(ones(size(bnd_node_ids)))
-
-                K = factorize(C + dt * A)
-
-                # Compute the solution at the next time step
-                u[k] = vec((K) \ (C * u[k-1] + dt .* f .* exp(1im*omega*time_steps[k])))
+            progress = round(k/length(time_steps)*100, digits=1)
+            elapsed = round((time_ns() - start)/10^9, digits=2)
+            estimated = round(length(time_steps) * elapsed / k, digits=2)
+            print(" ▸ " * string(progress) * "% (" * string(elapsed) * " of est. " * string(estimated) *" s)                \r")
+            u_hist = u[k-1]
+            u_prev = u[k-1]
+            u_temp = u[k-1]
+            for loop = 1:10000
+                u_prev = u_temp;
+                u_hist = u_hist * alpha + u_temp * (1-alpha)
                 
-                Bx, By, B, Hx, Hy, H, mag_energy = post_process_per_timestep(mesh_data, u[k], reluctivityperelement)
-            
-                ## Check the error with the threshold values
-                if abs.((1 ./ mu_func.(abs.(B[mur_pts]))) - reluctivityperelement[mur_pts]) <= threshold
-                    break;
-                end
+                ## Compute Bnorm
+                B = Bnorm_per_timestep(mesh_data, u_hist)
 
                 ## Assign new value of mur
                 reluctivityperelement[mur_pts] = 1 ./ mu_func.(abs.(B[mur_pts]));
+            
+                ## Assemble A matrix again
+                A = assemble_A(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+
+                # Compute the solution at the next time step
+                K = factorize(C + dt * A)
+                u_temp = vec(K \ (C * u_hist + dt .* imag(f .* exp(1im*omega*time_steps[k]))))
+            
+                ## Check the error with the threshold values
+                if norm(u_temp-u_prev) <= threshold
+                    break;
+                end
             end
+            u[k] = u_temp
         end
+        
+        elapsed = round((time_ns() - start)/10^9, digits=2)
+        println(" ✓ Solution computed ("*string(elapsed)*" seconds)                               ")
+
+        return u
+    end
+    
+    function fem_nonlinear_third_harmonic(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps, phi_diff)
+        ## Assemble A, B, and f Matrices
+        A, C, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+    
+        ## Specify time start, end and step
+        dt = time_steps[2] - time_steps[1]
+        u = Vector{Array{Float64,1}}(undef, length(time_steps))
+    
+        ## Initial condition
+        u[1] = zeros(mesh_data.nnodes)
+    
+        mur_pts = findall(x->x==2, mesh_data.e_group)
+        L = LinearIndices(mesh_data.e_group)
+        mur_pts = L[mur_pts]
+    
+        ## Threshold value for the error
+        threshold = 1e-3
+        alpha = 0.9
+    
+        print(" ▸ Computing solution .... \r")
+        start = time_ns()
+        ## Backward Euler 
+        for k = 2:length(time_steps)
+            progress = round(k/length(time_steps)*100, digits=1)
+            elapsed = round((time_ns() - start)/10^9, digits=2)
+            estimated = round(length(time_steps) * elapsed / k, digits=2)
+            print(" ▸ " * string(progress) * "% (" * string(elapsed) * " of est. " * string(estimated) *" s)                \r")
+            u_hist = u[k-1]
+            u_prev = u[k-1]
+            u_temp = u[k-1]
+            for loop = 1:10000
+                u_prev = u_temp;
+                u_hist = u_hist * alpha + u_temp * (1-alpha)
+                
+                ## Compute Bnorm
+                B = Bnorm_per_timestep(mesh_data, u_hist)
+
+                ## Assign new value of mur
+                reluctivityperelement[mur_pts] = 1 ./ mu_func.(abs.(B[mur_pts]));
+            
+                ## Assemble A matrix again
+                A = assemble_A(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+
+                # Compute the solution at the next time step
+                K = factorize(C + dt * A)
+                u_temp = vec(K \ (C * u_hist + dt .* (imag(f .* exp(1im*omega*time_steps[k])) + imag(f/3 .* exp(1im*3*omega*time_steps[k] + phi_diff)))))
+            
+                ## Check the error with the threshold values
+                if norm(u_temp-u_prev) <= threshold
+                    break;
+                end
+            end
+            u[k] = u_temp
+        end
+        
+        elapsed = round((time_ns() - start)/10^9, digits=2)
+        println(" ✓ Solution computed ("*string(elapsed)*" seconds)                               ")
 
         return u
     end

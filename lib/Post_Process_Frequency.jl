@@ -5,6 +5,9 @@ module Post_Process_Frequency
     export post_process
 
     function post_process(mesh_data, u, reluctivityperelement)
+        print(" ▸ Computing post processing variables .... \r")
+        start = time_ns()
+    
         Bx = zeros(Complex{Float64}, mesh_data.nelements);
         By = zeros(Complex{Float64}, mesh_data.nelements);
     
@@ -26,6 +29,9 @@ module Post_Process_Frequency
         H = (Hx.^2 + Hy.^2).^0.5
 
         mag_energy = 0.5 .* B .* H
+    
+        elapsed = round((time_ns() - start)/10^9, digits=2)
+        println(" ✓ Post processing variables computed ("*string(elapsed)*" seconds)                               ")
     
         return Bx, By, B, Hx, Hy, H, mag_energy
     end
