@@ -92,9 +92,9 @@ module FEM_Transient_Tri_1e
         ## Initial condition
         u[1] = zeros(mesh_data.nnodes)
     
-        mur_pts = findall(x->x==2, mesh_data.e_group)
+        core_elements = findall(x->x==2, mesh_data.e_group)
         L = LinearIndices(mesh_data.e_group)
-        mur_pts = L[mur_pts]
+        core_elements = L[core_elements]
     
         ## Threshold value for the error
         threshold = 1e-3
@@ -119,7 +119,7 @@ module FEM_Transient_Tri_1e
                 B = Bnorm_per_timestep(mesh_data, u_hist)
 
                 ## Assign new value of mur
-                reluctivityperelement[mur_pts] = 1 ./ mu_func.(abs.(B[mur_pts]));
+                reluctivityperelement[core_elements] = 1 ./ mu_func.(B[core_elements]);
             
                 ## Assemble A matrix again
                 A = assemble_A(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
@@ -153,9 +153,9 @@ module FEM_Transient_Tri_1e
         ## Initial condition
         u[1] = zeros(mesh_data.nnodes)
     
-        mur_pts = findall(x->x==2, mesh_data.e_group)
+        core_elements = findall(x->x==2, mesh_data.e_group)
         L = LinearIndices(mesh_data.e_group)
-        mur_pts = L[mur_pts]
+        core_elements = L[core_elements]
     
         ## Threshold value for the error
         threshold = 1e-3
@@ -180,7 +180,7 @@ module FEM_Transient_Tri_1e
                 B = Bnorm_per_timestep(mesh_data, u_hist)
 
                 ## Assign new value of mur
-                reluctivityperelement[mur_pts] = 1 ./ mu_func.(abs.(B[mur_pts]));
+                reluctivityperelement[core_elements] = 1 ./ mu_func.(B[core_elements]);
             
                 ## Assemble A matrix again
                 A = assemble_A(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)

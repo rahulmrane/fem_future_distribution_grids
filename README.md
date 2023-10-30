@@ -27,6 +27,7 @@ The code is mostly written in Julia, a programming language, and is used to cons
     - `Voltage-fed Analysis : Non-Linear BH Curve`: FEM Analysis incorporating non-linearity of the core material
   - `Time Domain`
     - `Current-fed Analysis`: FEM Analysis with presence of Current-fed coils
+    - `Current-fed Analysis : Non-Linear BH Curve`: FEM Analysis incorporating non-linearity of the core material
     - `Voltage-fed Coupled Circuit Analysis`: FEM Analysis for Voltage-fed Couple Circuit Analysis
     - `Voltage-fed Analysis : Non-Linear BH Curve`: FEM Analysis incorporating non-linearity of the core material
 
@@ -91,9 +92,17 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
   
+- Current-fed Analysis - Non-Linear BH Curve
+  - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
+  
 - Voltage-fed Analysis - Non-Linear BH Curve
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
 
 #### Required Code Files - Time Domain
 - <a href="lib/Post_Process_Time.jl">Post Processing</a>
@@ -104,6 +113,7 @@ The code is mostly written in Julia, a programming language, and is used to cons
 - <a href="lib/Save_VTK.jl">Saving VTK Files Module</a>
 - <a href="lib/Makie_Plots.jl">Makie Plots Module</a>
 - <a href="lib/FastSparse.jl">Fast Sparse Module</a>
+- <a href="lib/Assemble_Matrices.jl">Assemble Matrices Module</a>
 - Reading Mesh Data
   - <a href="lib/Mesh_Data_stedin.jl">STEDIN Transformer</a>
   - <a href="lib/Mesh_Data_e_core.jl">E-Core Transformer</a>

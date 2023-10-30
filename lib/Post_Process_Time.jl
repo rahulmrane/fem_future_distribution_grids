@@ -34,9 +34,6 @@ module Post_Process_Time
         Bx = zeros(Float64, mesh_data.nelements);
         By = zeros(Float64, mesh_data.nelements);
 
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
         u = u[1:mesh_data.nnodes]
 
         ## Perform a loop over the elements
@@ -61,9 +58,6 @@ module Post_Process_Time
     function Bnorm_per_timestep(mesh_data, u)
         Bx = zeros(Float64, mesh_data.nelements);
         By = zeros(Float64, mesh_data.nelements);
-
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
 
         u = u[1:mesh_data.nnodes]
 
