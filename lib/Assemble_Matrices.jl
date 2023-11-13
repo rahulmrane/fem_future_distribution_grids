@@ -22,11 +22,8 @@ module Assemble_Matrices
         Asp = FastSparseMatrix(mesh_data.nelements)
         Bsp = FastSparseMatrix(mesh_data.nelements)
 
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
         ## Perform a loop over the elements
-        for (element_id, nodes) in enumerate(mesh_data.elements)
+        @time for (element_id, nodes) in enumerate(mesh_data.elements)
             #....compute local vector contribution floc of the current element
             floc = mesh_data.area[element_id]/3*[1; 1; 1]*sourceperelement[element_id]
 
@@ -62,14 +59,8 @@ module Assemble_Matrices
         ## initialize global matrix A
         Asp = FastSparseMatrix(mesh_data.nelements)
 
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
-
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)
-            #....compute local vector contribution floc of the current element
-            floc = mesh_data.area[element_id]/3*[1; 1; 1]*sourceperelement[element_id]
-
             #....compute local matrix contribution Aloc of the current element     
             Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
 

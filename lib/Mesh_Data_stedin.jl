@@ -113,9 +113,9 @@ module Mesh_Data_stedin
             #....compute surface area of the current element
             area[element_id] = ((xnode2 - xnode1)*(ynode3-ynode1) - (xnode3-xnode1)*(ynode2 - ynode1))/2; 
 
-            #....compute local matrix contribution Aloc of the current element
+            #....compute local matrix contribution Emat of the current element
             Emat = [[xnode1;xnode2;xnode3] [ynode1;ynode2;ynode3] [1;1;1]] \ UniformScaling(1.);
-            Emat[3,:] .= 0;
+            Emat[3,:] .= 0
             push!(Eloc,Emat)
         end
 

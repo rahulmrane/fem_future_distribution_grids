@@ -1,6 +1,8 @@
 module FastSparse
 
-    export FastSparseMatrix, add!, change!
+    using StaticArrays
+
+    export FastSparseMatrix, add!, update!
 
     """
     # FastSparseMatrix
@@ -19,24 +21,19 @@ module FastSparse
         FastSparseMatrix(nelements::Int) = new(Vector{Int}(undef, 9*nelements), Vector{Int}(undef, 9*nelements), Vector{Complex{Float64}}(undef, 9*nelements))
     end
 
-
+    # function add!(fsp::FastSparseMatrix, id::Int, nodes::Vector{Int}, matrix::StaticArraysCore.SMatrix{3, 3, Float64, 9})
     function add!(fsp::FastSparseMatrix, id::Int, nodes::Vector{Int}, matrix::Matrix{Float64})
-        @debug "add: " id nodes matrix
         for (num, (index, element)) in enumerate(pairs(matrix))
             (i, j) = Tuple(index)
-            @debug "    ($i, $j) @ ($((id-1)*9 + num)) = $element)"
             fsp.i_row[(id-1)*9 + num] = nodes[i]
             fsp.i_col[(id-1)*9 + num] = nodes[j]
             fsp.value[(id-1)*9 + num] = element
         end
         return nothing
     end
-    
-    function change!(fsp::FastSparseMatrix, id::Int, nodes::Vector{Int}, matrix::Matrix{Float64})
-        @debug "add: " id nodes matrix
+
+    function update!(fsp::FastSparseMatrix, id::Int, matrix::Matrix{Float64})
         for (num, (index, element)) in enumerate(pairs(matrix))
-            (i, j) = Tuple(index)
-            @debug "    ($i, $j) @ ($((id-1)*9 + num)) = $element)"
             fsp.value[(id-1)*9 + num] = element
         end
         return nothing

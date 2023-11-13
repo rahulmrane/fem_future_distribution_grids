@@ -10,9 +10,8 @@ module Post_Process_Frequency
     
         Bx = zeros(Complex{Float64}, mesh_data.nelements);
         By = zeros(Complex{Float64}, mesh_data.nelements);
-    
-        xnode = mesh_data.xnode;
-        ynode = mesh_data.ynode;
+
+        u = u[1:mesh_data.nnodes]
     
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)
@@ -34,6 +33,25 @@ module Post_Process_Frequency
         println(" ✓ Post processing variables computed ("*string(elapsed)*" seconds)                               ")
     
         return Bx, By, B, Hx, Hy, H, mag_energy
+    end
+
+    function B_norm(mesh_data, u, reluctivityperelement)    
+        Bx = zeros(Complex{Float64}, mesh_data.nelements);
+        By = zeros(Complex{Float64}, mesh_data.nelements);
+
+        u = u[1:mesh_data.nnodes]
+    
+        ## Perform a loop over the elements
+        for (element_id, nodes) in enumerate(mesh_data.elements)
+            Emat = mesh_data.Eloc[element_id];
+            c = u[[nodes[1], nodes[2], nodes[3]]];
+            Bx[element_id] = sum(c .* Emat[2,:]);
+            By[element_id] = -sum(c .* Emat[1,:]);
+        end
+
+        B = (Bx.^2 + By.^2).^0.5
+    
+        return B
     end
 
 end
