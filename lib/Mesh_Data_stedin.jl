@@ -1,35 +1,37 @@
 module Mesh_Data_stedin
 
     using LinearAlgebra
+    using StaticArrays
 
     export get_mesh_data_tri_1e
 
-    struct mesh_data
-        nnodes  # number of nodes
-        xnode   # array of x coordinates
-        ynode   # array of y coordinates
-        nelements   # number of elements
-        e_group     # array containing the physical group number of each element
-        elements    #  more conveniently structured connectivity array
-        area    #  area of each element
-        Eloc    #  Emat of each element
+    struct meshdata
+        nnodes::Int64                              # number of nodes
+        nelements::Int64                           # number of elements
+        xnode::Vector{Float64}                     # array of x coordinates
+        ynode::Vector{Float64}                     # array of y coordinates
+        elements::Vector{Vector{Int64}}            # more conveniently structured connectivity array
+        e_group::Vector{Int64}                     # array containing the physical group number of each element
+        area::Vector{Float64}                      # area of each element
+        Eloc::Vector{MMatrix{3, 3, Float64, 9}}    # Emat of each element
     end
 
-    function get_mesh_data_tri_1e(gmsh)
+    function get_mesh_data_tri_1e(gmsh::Module)
         ## Get and sort the mesh nodes
         node_ids, node_coord, _ = gmsh.model.mesh.getNodes()
         nnodes = length(node_ids)
+        
         #..sort the node coordinates by ID, such that Node one sits at row 1
         tosort = [node_ids node_coord[1:3:end] node_coord[2:3:end]];
         sorted = sortslices(tosort , dims = 1);
         node_ids = sorted[:,1]
         xnode = sorted[:,2]
         ynode = sorted[:,3]
-
+    
         ## Get the mesh elements
         element_types, element_ids, element_connectivity = gmsh.model.mesh.getElements(2)
         nelements = length(element_ids[1])
-
+    
         ## Create groups of elements for the subdomains
         ngroup1 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 1)
         ngroup2 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 2)
@@ -47,16 +49,16 @@ module Mesh_Data_stedin
         ngroup14 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 14)
         ngroup15 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 15)
         ngroup16 = gmsh.model.mesh.getNodesForPhysicalGroup(2, 16)
-
-        e_group = zeros(1,nelements)
-        area = zeros(1,nelements)
+    
+        e_group = zeros(nelements)
+        area = zeros(nelements)
         Eloc = []
         elements = [zeros(Int, 3) for i in 1:nelements];
         for element_id in 1:nelements
             node1_id = element_connectivity[1][3*(element_id-1)+1]
             node2_id = element_connectivity[1][3*(element_id-1)+2]
             node3_id = element_connectivity[1][3*(element_id-1)+3]
-
+    
             # Determine which physical group the element belongs to
             G1  = sum(node1_id.== ngroup1[1])+sum(node2_id.== ngroup1[1])+sum(node3_id.== ngroup1[1]) # Oil
             G2  = sum(node1_id.== ngroup2[1])+sum(node2_id.== ngroup2[1])+sum(node3_id.== ngroup2[1]) # Core
@@ -72,7 +74,7 @@ module Mesh_Data_stedin
             G12 = sum(node1_id.== ngroup12[1])+sum(node2_id.== ngroup12[1])+sum(node3_id.== ngroup12[1]) # LV winding phase 2 right
             G13 = sum(node1_id.== ngroup13[1])+sum(node2_id.== ngroup13[1])+sum(node3_id.== ngroup13[1]) # LV winding phase 3 left
             G14 = sum(node1_id.== ngroup14[1])+sum(node2_id.== ngroup14[1])+sum(node3_id.== ngroup14[1]) # LV winding phase 3 right
-
+    
             if G1 == 3
                 e_group[element_id] = 1;
             elseif G2 == 3
@@ -102,24 +104,26 @@ module Mesh_Data_stedin
             elseif G14 == 3
                 e_group[element_id] = 14;
             end
-
+    
             # Store connectivity in a convenient format
             elements[element_id] = [node1_id, node2_id, node3_id];
-
+            
             #....retrieve the x and y coordinates of the local nodes of the current element
             xnode1 = xnode[node1_id]; xnode2 = xnode[node2_id]; xnode3 = xnode[node3_id];
             ynode1 = ynode[node1_id]; ynode2 = ynode[node2_id]; ynode3 = ynode[node3_id];
-
+    
             #....compute surface area of the current element
             area[element_id] = ((xnode2 - xnode1)*(ynode3-ynode1) - (xnode3-xnode1)*(ynode2 - ynode1))/2; 
-
-            #....compute local matrix contribution Emat of the current element
-            Emat = [[xnode1;xnode2;xnode3] [ynode1;ynode2;ynode3] [1;1;1]] \ UniformScaling(1.);
-            Emat[3,:] .= 0
+            
+            #....compute local matrix contribution Aloc of the current element
+            Xmat = SMatrix{3,3}(xnode1, xnode2, xnode3, ynode1, ynode2, ynode3, 1, 1, 1) 
+            rhs  = SMatrix{3,3}(1., 0., 0., 0., 1., 0., 0., 0., 1.) 
+            Emat = MMatrix{3,3}(Xmat\rhs)
+            Emat[3,:] .= 0;
             push!(Eloc,Emat)
         end
-
-        return mesh_data(nnodes, xnode, ynode, nelements, e_group, elements, area, Eloc)
+    
+        return meshdata(nnodes, nelements, xnode, ynode, elements, e_group, area, Eloc)
     end
 
 end

@@ -6,14 +6,14 @@ module FEM_VoltageFed_Tri_1e
 
     export fem
 
-    function fem(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, coil_voltage, ext_resistance, ext_inductance)
+    function fem(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, coil_voltage, ext_resistance, ext_inductance, z_length)
         ## Assemble A, B, and f Matrices
         A, B, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
 
         A = A + 1im*B;
 
         ## Circuit Equations
-        K = [A -f; 1im*omega*f' Diagonal(ext_resistance)+1im*omega*Diagonal(ext_inductance)]
+        K = [A -f; 1im*omega*f'.*z_length Diagonal(ext_resistance)+1im*omega*Diagonal(ext_inductance)]
         T = [zeros(mesh_data.nnodes); coil_voltage]
         
         print(" ▸ Computing solution .... \r")

@@ -2,6 +2,7 @@ module Assemble_Matrices
     
     using SparseArrays
     using LinearAlgebra
+    using StaticArrays
     include("FastSparse.jl");
     using .FastSparse
 
@@ -12,36 +13,40 @@ module Assemble_Matrices
         start = time_ns()
     
         ## initialize global matrix A & B and global vector f
-        if string(typeof(sourceperelement)) == "Matrix{Float64}"
+        if string(typeof(sourceperelement)) == "Vector{Float64}"
             f = zeros(Float64, mesh_data.nnodes, 1)
-        elseif string(typeof(sourceperelement)) == "Matrix{ComplexF64}"
+            floc = zeros(Float64, 3, 1)
+        elseif string(typeof(sourceperelement)) == "Vector{ComplexF64}"
             f = zeros(complex(Float64), mesh_data.nnodes, 1)
+            floc = zeros(complex(Float64), 3, 1)
         else
-            f = zeros(Float64, mesh_data.nnodes, size(sourceperelement[1])[2])
+            f = zeros(Float64, mesh_data.nnodes, size(sourceperelement[1])[1])
+            floc = zeros(Float64, 3, size(sourceperelement[1])[1])
         end
         Asp = FastSparseMatrix(mesh_data.nelements)
         Bsp = FastSparseMatrix(mesh_data.nelements)
-
+    
         ## Perform a loop over the elements
-        @time for (element_id, nodes) in enumerate(mesh_data.elements)
+        for (element_id, nodes) in enumerate(mesh_data.elements)
             #....compute local vector contribution floc of the current element
-            floc = mesh_data.area[element_id]/3*[1; 1; 1]*sourceperelement[element_id]
-
+            mul!(floc, ones(3), transpose(sourceperelement[element_id]))
+            floc .*= mesh_data.area[element_id]/3
+    
             #....compute local matrix contribution Aloc of the current element     
-            Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
-            Bloc = mesh_data.area[element_id] / 3 * conductivityperelement[element_id] * omega * Matrix{Float64}(I, 3, 3);
-
+            Aloc = SMatrix{3,3}(mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]));
+            Bloc = (mesh_data.area[element_id] / 3 * conductivityperelement[element_id] * omega) * SMatrix{3,3}(1I)
+    
             # Add local contribution to A & B
             add!(Asp, element_id, nodes, Aloc);
             add!(Bsp, element_id, nodes, Bloc);
-
+            
             #....and add local contribution to global matrices
             f[nodes,:] += floc;
         end
-
+    
         A = sparse(Asp.i_row, Asp.i_col, Asp.value, mesh_data.nnodes, mesh_data.nnodes, +);
         B = sparse(Bsp.i_row, Bsp.i_col, Bsp.value, mesh_data.nnodes, mesh_data.nnodes, +);
-
+    
         ## Handle the boundary conditions
         A[bnd_node_ids,:] .= 0;
         A[bnd_node_ids,bnd_node_ids] = Diagonal(ones(size(bnd_node_ids)))
@@ -62,7 +67,7 @@ module Assemble_Matrices
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)
             #....compute local matrix contribution Aloc of the current element     
-            Aloc = mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]);
+            Aloc = SMatrix{3,3}(mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]));
 
             # Add local contribution to A
             add!(Asp, element_id, nodes, Aloc);

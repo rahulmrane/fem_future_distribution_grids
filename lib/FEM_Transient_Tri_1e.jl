@@ -13,7 +13,7 @@ module FEM_Transient_Tri_1e
 
     function fem(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps, num_harmonic=[1], phase_diff=[0])
         ## Assemble A, B, and f Matrices
-        A, B, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+        A, B, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement[1], conductivityperelement, omega, bnd_node_ids)
 
         ## Specify time start, end and step
         dt = time_steps[2] - time_steps[1]
@@ -56,7 +56,7 @@ module FEM_Transient_Tri_1e
     
     function fem_nonlinear(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids, time_steps, num_harmonic=[1], phase_diff=[0])
         ## Assemble A, B, and f Matrices
-        A, C, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+        A, C, f = assemble_matrices(mesh_data, sourceperelement, reluctivityperelement[1], conductivityperelement, omega, bnd_node_ids)
     
         ## Specify time start, end and step
         dt = time_steps[2] - time_steps[1]
@@ -70,7 +70,7 @@ module FEM_Transient_Tri_1e
         core_elements = L[core_elements]
     
         ## Threshold value for the error
-        threshold = 1e-3
+        threshold = 1e-4
         alpha = 0.9
     
         print(" ▸ Computing solution .... \r")
@@ -84,6 +84,7 @@ module FEM_Transient_Tri_1e
             u_hist = u[k-1]
             u_prev = u[k-1]
             u_temp = u[k-1]
+            reluctivity = reluctivityperelement[k-1]
             for loop = 1:10000
                 u_prev = u_temp;
                 u_hist = u_hist * alpha + u_temp * (1-alpha)
@@ -92,10 +93,10 @@ module FEM_Transient_Tri_1e
                 B = Bnorm_per_timestep(mesh_data, u_hist)
 
                 ## Assign new value of mur
-                reluctivityperelement[core_elements] = 1 ./ mu_func.(B[core_elements]);
+                reluctivity[core_elements] = 1 ./ mu_func.(B[core_elements]);
 
                 ## Assemble A matrix again
-                A = assemble_A(mesh_data, sourceperelement, reluctivityperelement, conductivityperelement, omega, bnd_node_ids)
+                A = assemble_A(mesh_data, sourceperelement, reluctivity, conductivityperelement, omega, bnd_node_ids)
 
                 # Compute the solution at the next time step
                 K = factorize(C + dt * A)
@@ -111,6 +112,7 @@ module FEM_Transient_Tri_1e
                 end
             end
             u[k] = u_temp
+            reluctivityperelement[k] = reluctivity
         end
         
         elapsed = round((time_ns() - start)/10^9, digits=2)

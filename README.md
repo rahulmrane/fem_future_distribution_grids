@@ -86,17 +86,17 @@ The code is mostly written in Julia, a programming language, and is used to cons
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
   
-- Voltage-fed Coupled Circuit Analysis
-  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
-  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
-  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
-  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
-  
 - Current-fed Analysis - Non-Linear BH Curve
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
   - <a href="Magnetic Field Simulations/Time Domain/Current-fed Analysis - Non-Linear BH Curve/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
+  
+- Voltage-fed Coupled Circuit Analysis
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/single_phase_stedin_transformer_fem_modelling.ipynb">Single-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_stedin_transformer_fem_modelling.ipynb">Third Harmonic Three-Phase STEDIN Transformer Modelling Code</a>
+  - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Coupled Circuit Analysis/modelling/harmonic_single_phase_stedin_transformer_fem_modelling.ipynb">Third Harmonic Single-Phase STEDIN Transformer Modelling Code</a>
   
 - Voltage-fed Analysis - Non-Linear BH Curve
   - <a href="Magnetic Field Simulations/Time Domain/Voltage-fed Analysis - Non-Linear BH Curve/modelling/stedin_transformer_fem_modelling.ipynb">Three-Phase STEDIN Transformer Modelling Code</a>
