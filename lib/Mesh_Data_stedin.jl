@@ -58,7 +58,7 @@ module Mesh_Data_stedin
             node1_id = element_connectivity[1][3*(element_id-1)+1]
             node2_id = element_connectivity[1][3*(element_id-1)+2]
             node3_id = element_connectivity[1][3*(element_id-1)+3]
-    
+            
             # Determine which physical group the element belongs to
             G1  = sum(node1_id.== ngroup1[1])+sum(node2_id.== ngroup1[1])+sum(node3_id.== ngroup1[1]) # Oil
             G2  = sum(node1_id.== ngroup2[1])+sum(node2_id.== ngroup2[1])+sum(node3_id.== ngroup2[1]) # Core
@@ -74,7 +74,7 @@ module Mesh_Data_stedin
             G12 = sum(node1_id.== ngroup12[1])+sum(node2_id.== ngroup12[1])+sum(node3_id.== ngroup12[1]) # LV winding phase 2 right
             G13 = sum(node1_id.== ngroup13[1])+sum(node2_id.== ngroup13[1])+sum(node3_id.== ngroup13[1]) # LV winding phase 3 left
             G14 = sum(node1_id.== ngroup14[1])+sum(node2_id.== ngroup14[1])+sum(node3_id.== ngroup14[1]) # LV winding phase 3 right
-    
+            
             if G1 == 3
                 e_group[element_id] = 1;
             elseif G2 == 3

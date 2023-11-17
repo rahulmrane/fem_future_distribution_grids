@@ -2,10 +2,22 @@ $MeshFormat
 4.1 0 8
 $EndMeshFormat
 $PhysicalNames
-5
+17
 1 1 "Enclosure"
 2 1 "Oil"
 2 2 "Core"
+2 3 "HV1l"
+2 4 "HV1r"
+2 5 "HV2l"
+2 6 "HV2r"
+2 7 "HV3l"
+2 8 "HV3r"
+2 9 "LV1l"
+2 10 "LV1r"
+2 11 "LV2l"
+2 12 "LV2r"
+2 13 "LV3l"
+2 14 "LV3r"
 2 15 "HV windings"
 2 16 "LV windings"
 $EndPhysicalNames

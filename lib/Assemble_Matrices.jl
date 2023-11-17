@@ -14,14 +14,11 @@ module Assemble_Matrices
     
         ## initialize global matrix A & B and global vector f
         if string(typeof(sourceperelement)) == "Vector{Float64}"
-            f = zeros(Float64, mesh_data.nnodes, 1)
-            floc = zeros(Float64, 3, 1)
+            f = zeros(Float64, mesh_data.nnodes)
         elseif string(typeof(sourceperelement)) == "Vector{ComplexF64}"
-            f = zeros(complex(Float64), mesh_data.nnodes, 1)
-            floc = zeros(complex(Float64), 3, 1)
+            f = zeros(ComplexF64, mesh_data.nnodes);
         else
             f = zeros(Float64, mesh_data.nnodes, size(sourceperelement[1])[1])
-            floc = zeros(Float64, 3, size(sourceperelement[1])[1])
         end
         Asp = FastSparseMatrix(mesh_data.nelements)
         Bsp = FastSparseMatrix(mesh_data.nelements)
@@ -29,8 +26,7 @@ module Assemble_Matrices
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)
             #....compute local vector contribution floc of the current element
-            mul!(floc, ones(3), transpose(sourceperelement[element_id]))
-            floc .*= mesh_data.area[element_id]/3
+            floc = mesh_data.area[element_id]/3*[1; 1; 1]*transpose(sourceperelement[element_id])
     
             #....compute local matrix contribution Aloc of the current element     
             Aloc = SMatrix{3,3}(mesh_data.area[element_id]*reluctivityperelement[element_id]*(transpose(mesh_data.Eloc[element_id])*mesh_data.Eloc[element_id]));

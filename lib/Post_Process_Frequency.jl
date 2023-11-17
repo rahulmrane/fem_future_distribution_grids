@@ -9,8 +9,8 @@ module Post_Process_Frequency
         print(" ▸ Computing post processing variables .... \r")
         start = time_ns()
     
-        Bx = zeros(Complex{Float64}, mesh_data.nelements);
-        By = zeros(Complex{Float64}, mesh_data.nelements);
+        Bx = zeros(ComplexF64, mesh_data.nelements);
+        By = zeros(ComplexF64 mesh_data.nelements);
 
         u = u[1:mesh_data.nnodes]
     
@@ -37,8 +37,8 @@ module Post_Process_Frequency
     end
 
     function B_norm(mesh_data, u, reluctivityperelement)    
-        Bx = zeros(Complex{Float64}, mesh_data.nelements);
-        By = zeros(Complex{Float64}, mesh_data.nelements);
+        Bx = zeros(ComplexF64, mesh_data.nelements);
+        By = zeros(ComplexF64, mesh_data.nelements);
 
         u = u[1:mesh_data.nnodes]
     
@@ -58,7 +58,7 @@ module Post_Process_Frequency
     function core_loss(mesh_data, B, z_length) 
         print(" ▸ Computing core loss .... \r")
         start = time_ns()
-        Pv = zeros(Complex{Float64}, mesh_data.nelements);
+        Pv = zeros(ComplexF64, mesh_data.nelements);
     
         a = 1.53
         b = 1.6
@@ -83,7 +83,7 @@ module Post_Process_Frequency
     function source_current_density(mesh_data, u, sourceperelement)
         print(" ▸ Computing current density .... \r")
         start = time_ns()
-        Jel = zeros(Complex{Float64}, mesh_data.nelements);        
+        Jel = zeros(ComplexF64, mesh_data.nelements);        
     
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)

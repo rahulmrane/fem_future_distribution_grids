@@ -97,7 +97,7 @@ module Post_Process_Time
     end
 
     function core_loss_per_timestep(mesh_data, B, z_length)
-        Pv = zeros(Complex{Float64}, mesh_data.nelements);
+        Pv = zeros(Float64, mesh_data.nelements);
     
         a = 1.53
         b = 1.6
@@ -137,7 +137,7 @@ module Post_Process_Time
     end
 
     function source_current_density_per_timestep(mesh_data, u, sourceperelement)
-        Jel = zeros(Complex{Float64}, mesh_data.nelements);        
+        Jel = zeros(Float64, mesh_data.nelements);        
     
         ## Perform a loop over the elements
         for (element_id, nodes) in enumerate(mesh_data.elements)
