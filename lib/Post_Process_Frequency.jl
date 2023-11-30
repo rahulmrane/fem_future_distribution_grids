@@ -10,7 +10,7 @@ module Post_Process_Frequency
         start = time_ns()
     
         Bx = zeros(ComplexF64, mesh_data.nelements);
-        By = zeros(ComplexF64 mesh_data.nelements);
+        By = zeros(ComplexF64, mesh_data.nelements);
 
         u = u[1:mesh_data.nnodes]
     
