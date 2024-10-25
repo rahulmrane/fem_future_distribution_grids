@@ -6,6 +6,7 @@
 module FEM_VoltageFed_Tri_1e
 
     using LinearAlgebra
+    using Statistics
     using fem_future_distribution_grids
 
     function fem(mesh, sourceperelement, reluctivityperelement, conductivityperelement, omega, coil_voltage, ext_resistance, ext_inductance, z_length)
@@ -127,7 +128,9 @@ module FEM_VoltageFed_Tri_1e
             u = K_factored \ T
             
             ## Check the error against the threshold
-            if norm(u - u_prev) <= threshold
+            epsilon = 1e-12
+            avg_percentage_error = mean(abs.((u .- u_prev) ./ (u_prev .+ epsilon)))
+            if avg_percentage_error <= threshold
                 break
             end
         end

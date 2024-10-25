@@ -7,6 +7,7 @@ module FEM_Transient_VoltageFed_Tri_1e
 
     using SparseArrays
     using LinearAlgebra
+    using Statistics
     using fem_future_distribution_grids
 
     function fem(mesh, sourceperelement, reluctivityperelement, conductivityperelement, omega, coil_voltage, ext_resistance, ext_inductance, z_length, time_steps, num_harmonic, phase_diff)
@@ -195,7 +196,9 @@ module FEM_Transient_VoltageFed_Tri_1e
                 u_temp = K_factored \ u_temp
             
                 ## Check the error against the threshold
-                if norm(u_temp - u_prev) <= threshold
+                epsilon = 1e-12
+                avg_percentage_error = mean(abs.((u_temp .- u_prev) ./ (u_prev .+ epsilon)))
+                if avg_percentage_error <= threshold
                     itr_count = loop
                     break
                 end
@@ -213,9 +216,10 @@ module FEM_Transient_VoltageFed_Tri_1e
                 print(" ▸ Computing nonlinear solution (Iteration "*string(Int(itr_count))*") .... " * string(progress) * "% (" * string(elapsed) * " of est. " * string(estimated) *" s)                \r")
             end
         end
-                                                
+
+        ## Time 
         elapsed = round((time_ns() - start)/10^9, digits=2)
-        println(" ✓ Solution computed ("*string(elapsed)*" seconds)                               ")
+        printstyled(" ✓ Solution computed ("*string(elapsed)*" seconds)                                                              \n", color = :green)
 
         return u
     end

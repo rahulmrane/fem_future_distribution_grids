@@ -40,10 +40,12 @@ mwlv = 11.25e-2;
 Awlv = wwlv * hwlv;
 
 # Mesh densities
-lc1 = 2e-2;      # Enclosure & core outer
-lc2 = 1e-2;      # Core inner
-lc3 = 1e-2;      # HV windings
-lc4 = 1e-2;      # LV windings
+## original values 2e-2, 1e-2, 1e-2, 1e-2
+## Optimized values 4e-2, 4e-2, 4e-2, 2e-2
+lc1 = 4e-2;      # Enclosure & core outer
+lc2 = 4e-2;      # Core inner
+lc3 = 4e-2;      # HV windings
+lc4 = 2e-2;      # LV windings
 
 function gmsh_add_rectangle(mid, width, height, lc)
     geo = gmsh.model.geo;
@@ -263,4 +265,4 @@ display(fem_future_distribution_grids.Makie_Plots.plot_surface_tri_1e(msh, color
 msh, colors = fem_future_distribution_grids.Mesh_Data_STEDIN.get_cell_mesh_tri_1e(e_group)
 display(fem_future_distribution_grids.Makie_Plots.plot_mesh_tri_1e(msh, colors, "stedin_transformer_mesh", @__DIR__))
 
-print(" ✓ Code execution completed !!!!")
+printstyled(" ✓ Code execution completed !!!!", color = :magenta)

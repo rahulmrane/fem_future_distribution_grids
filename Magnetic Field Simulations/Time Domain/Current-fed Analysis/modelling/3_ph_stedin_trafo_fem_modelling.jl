@@ -103,8 +103,11 @@ u = fem_future_distribution_grids.FEM_Transient_Tri_1e.fem(mesh, sourceperelemen
 Bx, By, B, Hx, Hy, H, mag_energy = fem_future_distribution_grids.Post_Process_Time.post_process(mesh, u, reluctivityperelement, time_steps)
 
 ## Plots
-selected_node = 4276
-selected_element = 7051
+printstyled(" ▸ Saving Plots .... \r", color = :red)
+start = time_ns()
+core_elements = findall(x -> x == 2, mesh.e_group)
+selected_node = rand(core_elements)
+selected_element = rand(core_elements)
 
 # Select single element or node
 u_wave = [u_curr[selected_node] for u_curr in u]
@@ -161,6 +164,8 @@ plot(time_steps, reluctivityperelement_wave, label = "mur")
 xlabel!("time (sec)")
 ylabel!("mur")
 savefig((@__DIR__) * "/../img/3_ph_stedin_trafo_mur.png")
+elapsed = round((time_ns() - start)/10^9, digits=2)
+printstyled(" ✓ Plots saved ("*string(elapsed)*" seconds)                               \n", color = :green)
 
 # printstyled(" ▸ Saving CSV files .... \r", color = :red)
 # start = time_ns()

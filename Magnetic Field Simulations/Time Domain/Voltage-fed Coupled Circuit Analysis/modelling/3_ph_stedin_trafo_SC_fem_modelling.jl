@@ -138,8 +138,11 @@ Jel = fem_future_distribution_grids.Post_Process_Time.source_current_density(mes
 Pwindingp, Pwindings = fem_future_distribution_grids.Post_Process_Time.winding_loss(mesh, u, Rp, Rs, time_steps)
 
 ## Plots
-selected_node = 4276
-selected_element = 7051
+printstyled(" ▸ Saving Plots .... \r", color = :red)
+start = time_ns()
+core_elements = findall(x -> x == 2, mesh.e_group)
+selected_node = rand(core_elements)
+selected_element = rand(core_elements)
 
 # Select single element or node
 u_wave = [u_curr[selected_node] for u_curr in u]
@@ -212,6 +215,8 @@ plot(time_steps, Pwindings, label = "Pwindings")
 xlabel!("time (sec)")
 ylabel!("Pwindings")
 savefig((@__DIR__) * "/../img/3_ph_stedin_trafo_Pwindings_SC.png")
+elapsed = round((time_ns() - start)/10^9, digits=2)
+printstyled(" ✓ Plots saved ("*string(elapsed)*" seconds)                               \n", color = :green)
 
 # printstyled(" ▸ Saving CSV files .... \r", color = :red)
 # start = time_ns()

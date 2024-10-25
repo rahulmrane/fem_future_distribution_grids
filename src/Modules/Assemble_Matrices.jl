@@ -32,7 +32,7 @@ module Assemble_Matrices
     end
 
     function assemble_A(mesh, reluctivityperelement)
-        ## initialize global matrix A
+        ## Initialize global matrix A
         I = Int64[]
         J = Int64[]
         Avalues = Float64[]
@@ -70,7 +70,7 @@ module Assemble_Matrices
     end
 
     function assemble_B(mesh, conductivityperelement, omega)
-        ## initialize global matrix B
+        ## Initialize global matrix B
         I = Int64[]
         J = Int64[]
         Bvalues = Float64[]
@@ -108,7 +108,7 @@ module Assemble_Matrices
     end
 
     function assemble_f(mesh, sourceperelement::Vector{T}) where T <: Number
-        ## initialize global vector f
+        ## Initialize global vector f
         f = zeros(eltype(sourceperelement), mesh.nnodes)
         ones = SVector(1, 1, 1)
 
@@ -139,7 +139,7 @@ module Assemble_Matrices
         ## Number of coils
         ncoils = size(sourceperelementmat)[2]
 
-        ## initialize global vector f
+        ## Initialize global vector f
         f = zeros(eltype(sourceperelementmat), mesh.nnodes, ncoils)
 
         for coil_id = 1:ncoils
